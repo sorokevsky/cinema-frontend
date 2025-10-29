@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="flex flex-col gap-3 card shadow bg-base-100 p-4">
     <template v-if="loading">
       <div class="mx-auto my-30">
         <span class="loading loading-dots loading-xl" />

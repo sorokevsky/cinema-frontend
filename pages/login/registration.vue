@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center flex flex-col gap-3 w-xs mx-auto">
+  <div class="flex flex-col gap-3 w-xs mx-auto card shadow bg-base-100 p-4">
     <div
       v-if="errorMessage"
       role="alert"

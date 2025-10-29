@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-3 w-xs mx-auto">
+  <div class="flex flex-col gap-3 w-xs mx-auto card shadow bg-base-100 p-4">
     <div
       v-if="errorMessage"
       role="alert"
@@ -41,16 +41,16 @@
           Логин
         </template>
       </button>
+      <p>
+        Если у вас нет аккаунта
+        <nuxt-link
+          to="/login/registration"
+          class="link link-primary"
+        >
+          зарегистрируйтесь
+        </nuxt-link>
+      </p>
     </form>
-    <p>
-      Если у вас нет аккаунта
-      <nuxt-link
-        to="/login/registration"
-        class="link link-primary"
-      >
-        зарегистрируйтесь
-      </nuxt-link>
-    </p>
   </div>
 </template>
 
@@ -76,7 +76,7 @@ const handleSubmit = async () => {
   }
   catch {
     errorMessage.value
-      = 'Неверный логин или пароль. Проверьте введенные данные и попробуйте снова'
+      = 'Неверный логин или пароль. Проверьте введенные данные и попробуйте снова.'
   }
   finally {
     loading.value = false

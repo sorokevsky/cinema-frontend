@@ -57,7 +57,7 @@ const groupSessionsByDateAndCinemas = (
     if (!dateMap.has(formatted.date)) {
       dateMap.set(formatted.date, {
         originalDate: parse(formatted.date, 'dd.MM', new Date()),
-        cinemaMap: new Map()
+        cinemaMap: new Map(),
       })
     }
 
@@ -90,7 +90,7 @@ const groupSessionsByDateAndCinemas = (
       return {
         date,
         cinemas: cinemasWithSessions,
-        originalDate
+        originalDate,
       }
     })
     .sort((a, b) => compareAsc(a.originalDate, b.originalDate))
@@ -110,7 +110,7 @@ const groupSessionsByDateAndMovies = (
     if (!dateMap.has(formatted.date)) {
       dateMap.set(formatted.date, {
         originalDate: parse(formatted.date, 'dd.MM', new Date()),
-        movieMap: new Map()
+        movieMap: new Map(),
       })
     }
 
@@ -143,7 +143,7 @@ const groupSessionsByDateAndMovies = (
       return {
         date,
         movies: moviesWithSessions,
-        originalDate
+        originalDate,
       }
     })
     .sort((a, b) => compareAsc(a.originalDate, b.originalDate))

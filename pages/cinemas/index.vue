@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="flex flex-col gap-3 card shadow bg-base-100 p-4">
     <table-component
       :data="cinemasData"
       :columns="сolumns"
