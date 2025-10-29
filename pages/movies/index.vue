@@ -1,0 +1,81 @@
+<template>
+  <div class="flex flex-col gap-3">
+    <template v-if="loading">
+      <div class="mx-auto my-30">
+        <span class="loading loading-dots loading-xl" />
+      </div>
+    </template>
+    <template v-else>
+      <table-component :data="moviesData" :columns="сolumns" />
+    </template>
+  </div>
+</template>
+
+<script setup lang="ts">
+import type { Movie } from "~/client";
+
+const сolumns = [
+  {
+    key: "posterImage",
+    title: "",
+    render: (movie: Movie) =>
+      h("img", {
+        src: getFullUrlString(movie.posterImage!),
+        alt: movie.title,
+        class: "object-cover rounded",
+      }),
+  },
+  {
+    key: "title",
+    title: "Название",
+  },
+  {
+    key: "lengthMinutes",
+    title: "Продолжительность",
+    render: (movie: Movie) =>
+      h("span", getTimeFromMinutesString(movie.lengthMinutes!)),
+  },
+  {
+    key: "rating",
+    title: "Рейтинг",
+    render: (movie: Movie) => {
+      const getRatingColor = (rating: number) => {
+        if (rating >= 8) {
+          return "badge-success";
+        } else if (rating >= 5) {
+          return "badge-warning";
+        } else {
+          return "badge-error";
+        }
+      };
+      const rating = movie.rating ?? 0;
+
+      return h("span", { class: `badge ${getRatingColor(rating)}` }, rating);
+    },
+  },
+  {
+    key: "id",
+    float: "right",
+    title: "",
+    render: (movie: Movie) => {
+      return h(
+        "a",
+        {
+          href: `/movies/${movie.id}`,
+          class: "btn",
+        },
+        "Посмотреть сеансы"
+      );
+    },
+  },
+]
+
+const { getAllMovies } = useMovieCatalog();
+const moviesData = ref<Movie[]>([]);
+const loading = ref(true);
+
+onMounted(async () => {
+  moviesData.value = await getAllMovies();
+  loading.value = false;
+});
+</script>
