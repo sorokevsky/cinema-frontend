@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="flex flex-col gap-3 card shadow bg-base-100 p-4">
     <template v-if="loading">
       <div class="mx-auto my-30">
         <span class="loading loading-dots loading-xl" />
@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { isBefore, isAfter } from 'date-fns'
+import { differenceInSeconds, addSeconds, isBefore, isAfter } from 'date-fns'
 
 import {
   getMeBookings,
@@ -52,6 +52,20 @@ import {
 definePageMeta({
   middleware: ['auth'],
 })
+
+const { settings } = useSettingsStore()
+const { getCinemaById } = useCinemaCatalog()
+const { getSessionById, getMovieById } = useMovieCatalog()
+
+interface EnrichedBooking extends Booking {
+  movie?: Movie
+  cinema?: Cinema
+  session?: MovieSessionDetails
+}
+
+const enrichedBookings = ref<EnrichedBooking[]>([])
+const loading = ref<boolean>(true)
+const currentTime = ref(new Date())
 
 const unpaidTicketsColumns = [
   {
@@ -101,7 +115,7 @@ const unpaidTicketsColumns = [
         'button',
         {
           onClick: () => paymentBooking(booking),
-          class: 'btn',
+          class: 'btn w-full',
         },
         'Оплатить',
       )
@@ -110,10 +124,16 @@ const unpaidTicketsColumns = [
   {
     key: 'bookedAt',
     title: '',
+    float: 'right',
     render: (booking: EnrichedBooking) => {
+      const remainingTime = getRemainingTime(booking.bookedAt)
+      const formattedTime = getTimeFromSecondsString(remainingTime)
       return h(
-        'span',
-        getFormattedDateString(booking.bookedAt || 0, 'HH:mm'),
+        'div',
+        {
+          class: 'flex flex-col items-end gap-1',
+        },
+        [h('span', `${formattedTime}`)],
       )
     },
   },
@@ -161,55 +181,68 @@ const defaultColumns = [
   },
 ]
 
-const { settings } = useSettingsStore()
-const { getCinemaById } = useCinemaCatalog()
-const { getSessionById, getMovieById } = useMovieCatalog()
-
-interface EnrichedBooking extends Booking {
-  movie?: Movie
-  cinema?: Cinema
-  session?: MovieSessionDetails
-}
-
-const enrichedBookings = ref<EnrichedBooking[]>([])
-const loading = ref<boolean>(true)
+const bookingPaymentTimeSeconds = computed(
+  () => settings?.bookingPaymentTimeSeconds || 180,
+)
 
 const unpaidTickets = computed(() => {
   if (!enrichedBookings.value?.length) {
     return []
   }
-  return enrichedBookings.value.filter((booking: EnrichedBooking) => !booking.isPaid)
+
+  const unpaid = enrichedBookings.value.filter(
+    (booking: EnrichedBooking) => !booking.isPaid,
+  )
+
+  return unpaid.filter(booking => !(getRemainingTime(booking.bookedAt) <= 0))
 })
 
 const futureTickets = computed(() => {
   if (!enrichedBookings.value?.length) {
     return []
   }
-  return enrichedBookings.value.filter((booking: EnrichedBooking) => booking.isPaid && isAfter(new Date(booking.session!.startTime!), new Date()))
+  return enrichedBookings.value.filter(
+    (booking: EnrichedBooking) =>
+      booking.isPaid
+      && isAfter(new Date(booking.session!.startTime!), new Date()),
+  )
 })
+
 const pastTickets = computed(() => {
   if (!enrichedBookings.value?.length) {
     return []
   }
-  return enrichedBookings.value.filter((booking: EnrichedBooking) => booking.isPaid && isBefore(new Date(booking.session!.startTime!), new Date()))
+  return enrichedBookings.value.filter(
+    (booking: EnrichedBooking) =>
+      booking.isPaid
+      && isBefore(new Date(booking.session!.startTime!), new Date()),
+  )
 })
 
 onMounted(async () => {
-  console.log(settings)
   try {
     const bookings = await getMeBookings({})
-    bookings.map(async (booking: Booking) => {
-      const session = await getSessionById(Number(booking.movieSessionId))
-      const [movie, cinema] = await Promise.all([
-        getMovieById(Number(session.movieId)),
-        getCinemaById(Number(session.cinemaId)),
-      ])
-      enrichedBookings.value.push({
-        ...booking,
-        movie,
-        cinema,
-        session,
-      })
+
+    bookings.forEach(async (booking) => {
+      try {
+        const session = await getSessionById(Number(booking.movieSessionId))
+        const [movie, cinema] = await Promise.all([
+          getMovieById(Number(session.movieId)),
+          getCinemaById(Number(session.cinemaId)),
+        ])
+        enrichedBookings.value.push({
+          ...booking,
+          movie,
+          cinema,
+          session,
+        })
+      }
+      catch (err) {
+        console.error(
+          'Ошибка при получении дополнительных данных бронирования',
+          err,
+        )
+      }
     })
   }
   catch {
@@ -218,6 +251,10 @@ onMounted(async () => {
   finally {
     loading.value = false
   }
+
+  setInterval(() => {
+    currentTime.value = new Date()
+  }, 1000)
 })
 
 const paymentBooking = async (booking: Booking) => {
@@ -228,7 +265,15 @@ const paymentBooking = async (booking: Booking) => {
     booking.isPaid = true
   }
   catch (err) {
-    alert(err)
+    console.error('Ошибка при оплате бронирования', err)
   }
+}
+
+const getRemainingTime = (bookedAt: unknown): number => {
+  const expiryTime = addSeconds(
+    new Date(bookedAt as string),
+    bookingPaymentTimeSeconds.value,
+  )
+  return differenceInSeconds(expiryTime, currentTime.value)
 }
 </script>
