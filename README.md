@@ -1,60 +1,36 @@
-# Nuxt Minimal Starter
+Разработка проекта проходила с node v22
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Предварительно запустите бекенд
 
-## Setup
+Перед запуском приложения необходимо клонировать и запустить бекенд.
+Чтобы все работало - выполните следующие действия:
 
-Make sure to install dependencies:
+```bash
+git clone https://github.com/maxbit-solution/frontend_technical_task.git
+cd frontend_technical_task
+npm i
+npm start
+```
+
+## Установка зависимостей
+
+Перед запуском приложения необходимо установить зависимости:
 
 ```bash
 # npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## Запуск приложения в режиме разработки
 
-Start the development server on `http://localhost:3000`:
+Приложение доступно по адресу `http://localhost:3000`:
 
 ```bash
 # npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
+## Тесты
 
 Locally preview production build:
 
@@ -71,5 +47,3 @@ yarn preview
 # bun
 bun run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
