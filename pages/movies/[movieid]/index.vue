@@ -11,15 +11,15 @@
           <img
             class="object-cover rounded"
             :src="getFullUrlString(movie?.posterImage!)"
-          />
+          >
           <div>
             <h1 class="text-3xl font-medium">{{ movie?.title }}</h1>
             <p class="py-6">{{ movie?.description }}</p>
             <p class="py-6">
-              Год: {{ movie?.year }}<br />
+              Год: {{ movie?.year }}<br >
               Продолжительность:
-              {{ getTimeFromMinutesString(movie?.lengthMinutes || 0) }}<br />
-              Рейтинг: {{ movie?.rating }}<br />
+              {{ getTimeFromMinutesString(movie?.lengthMinutes || 0) }}<br >
+              Рейтинг: {{ movie?.rating }}<br >
             </p>
           </div>
         </div>

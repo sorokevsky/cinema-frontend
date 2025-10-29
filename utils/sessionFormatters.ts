@@ -1,4 +1,3 @@
-import { format } from 'date-fns'
 import type { MovieSession, Cinema, Movie } from '~/client'
 
 interface FormattedSession {
@@ -146,8 +145,8 @@ const safeFormatDate = (dateString: string | undefined): { date: string, time: s
     if (isNaN(date.getTime())) return null
     
     return {
-      date: format(date, 'dd.MM'),
-      time: format(date, 'HH:mm')
+      date: getFormattedDateString(date, 'dd.MM'),
+      time: getFormattedDateString(date, 'HH:mm')
     }
   } catch {
     return null

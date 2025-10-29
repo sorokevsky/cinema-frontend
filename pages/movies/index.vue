@@ -38,20 +38,6 @@ const сolumns = [
   {
     key: "rating",
     title: "Рейтинг",
-    render: (movie: Movie) => {
-      const getRatingColor = (rating: number) => {
-        if (rating >= 8) {
-          return "badge-success";
-        } else if (rating >= 5) {
-          return "badge-warning";
-        } else {
-          return "badge-error";
-        }
-      };
-      const rating = movie.rating ?? 0;
-
-      return h("span", { class: `badge ${getRatingColor(rating)}` }, rating);
-    },
   },
   {
     key: "id",

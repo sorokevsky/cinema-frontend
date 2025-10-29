@@ -16,7 +16,12 @@
         placeholder="Введите пароль"
       />
 
-      <button type="submit" class="btn mt-4">Логин</button>
+      <button type="submit" class="btn mt-4" :disabled="loading">
+        <template v-if="loading">
+          <span class="loading loading-spinner loading-xs" />
+        </template>
+        <template v-else> Логин </template>
+      </button>
     </form>
     <p>
       Если у вас нет аккаунта

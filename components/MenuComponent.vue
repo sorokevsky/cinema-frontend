@@ -9,14 +9,34 @@
         {{ route.title }}
       </NuxtLink>
     </template>
+
+    <template v-if="token">
+      <button class="btn" @click="logout">Выход</button>
+    </template>
+    <template v-else>
+      <NuxtLink
+        class="btn"
+        :class="{ 'btn-primary': $route.path.startsWith('/login') }"
+        to="/login"
+      >
+        Вход
+      </NuxtLink>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
+const token = computed(() => useCookie("token").value);
+
 const ROUTES = [
   { name: "/movies", title: "Фильмы" },
   { name: "/cinemas", title: "Кинотеатры" },
   { name: "/my-tickets", title: "Мои билеты" },
-  { name: "/login", title: "Вход" },
 ] as const;
+
+const logout = () => {
+  const cookie = useCookie("token");
+  cookie.value = null;
+  navigateTo("/movies");
+};
 </script>

@@ -12,7 +12,7 @@
         placeholder="Введите логин"
         type="email"
         required
-      />
+      >
       <div class="validator-hint">Enter valid email address</div>
 
       <label class="label">Пароль</label>
@@ -22,7 +22,7 @@
         class="input validator"
         placeholder="Введите пароль"
         required
-      />
+      >
       <div class="validator-hint">Enter valid email address</div>
 
       <label class="label">Повторите пароль</label>
@@ -32,7 +32,7 @@
         class="input validator"
         placeholder="Повторите пароль"
         required
-      />
+      >
       <div class="validator-hint">Enter valid email address</div>
 
       <button class="btn mt-4">Зарегистрироваться</button>
