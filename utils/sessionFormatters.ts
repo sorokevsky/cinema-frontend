@@ -1,4 +1,5 @@
 import type { MovieSession, Cinema, Movie } from '~/client'
+import { compareAsc, parse } from 'date-fns'
 
 interface FormattedSession {
   id: number
@@ -47,17 +48,21 @@ const groupSessionsByDateAndCinemas = (
   sessions: MovieSession[],
   cinemas: Cinema[],
 ): DateGroupWithCinemas[] => {
-  const dateMap = new Map<string, Map<number, FormattedSession[]>>()
+  const dateMap = new Map<string, { originalDate: Date, cinemaMap: Map<number, FormattedSession[]> }>()
 
   sessions.forEach((session) => {
     const formatted = safeFormatDate(session.startTime)
     if (!formatted) return
 
     if (!dateMap.has(formatted.date)) {
-      dateMap.set(formatted.date, new Map())
+      dateMap.set(formatted.date, {
+        originalDate: parse(formatted.date, 'dd.MM', new Date()),
+        cinemaMap: new Map()
+      })
     }
 
-    const cinemaMap = dateMap.get(formatted.date)!
+    const dateData = dateMap.get(formatted.date)!
+    const cinemaMap = dateData.cinemaMap
 
     if (!cinemaMap.has(Number(session.cinemaId))) {
       cinemaMap.set(Number(session.cinemaId), [])
@@ -70,7 +75,7 @@ const groupSessionsByDateAndCinemas = (
   })
 
   return Array.from(dateMap.entries())
-    .map(([date, cinemaMap]) => {
+    .map(([date, { originalDate, cinemaMap }]) => {
       const cinemasWithSessions: CinemaSessions[] = Array.from(cinemaMap.entries())
         .map(([cinemaId, sessions]) => {
           const cinema = cinemas.find(c => c.id === cinemaId)
@@ -85,26 +90,32 @@ const groupSessionsByDateAndCinemas = (
       return {
         date,
         cinemas: cinemasWithSessions,
+        originalDate
       }
     })
-    .sort((a, b) => a.date.localeCompare(b.date))
+    .sort((a, b) => compareAsc(a.originalDate, b.originalDate))
+    .map(({ originalDate, ...item }) => item as DateGroupWithCinemas)
 }
 
 const groupSessionsByDateAndMovies = (
   sessions: MovieSession[],
   movies: Movie[],
 ): DateGroupWithMovies[] => {
-  const dateMap = new Map<string, Map<number, FormattedSession[]>>()
+  const dateMap = new Map<string, { originalDate: Date, movieMap: Map<number, FormattedSession[]> }>()
 
   sessions.forEach((session) => {
     const formatted = safeFormatDate(session.startTime)
     if (!formatted) return
 
     if (!dateMap.has(formatted.date)) {
-      dateMap.set(formatted.date, new Map())
+      dateMap.set(formatted.date, {
+        originalDate: parse(formatted.date, 'dd.MM', new Date()),
+        movieMap: new Map()
+      })
     }
 
-    const movieMap = dateMap.get(formatted.date)!
+    const dateData = dateMap.get(formatted.date)!
+    const movieMap = dateData.movieMap
 
     if (!movieMap.has(Number(session.movieId))) {
       movieMap.set(Number(session.movieId), [])
@@ -117,7 +128,7 @@ const groupSessionsByDateAndMovies = (
   })
 
   return Array.from(dateMap.entries())
-    .map(([date, movieMap]) => {
+    .map(([date, { originalDate, movieMap }]) => {
       const moviesWithSessions: MovieSessions[] = Array.from(movieMap.entries())
         .map(([movieId, sessions]) => {
           const movie = movies.find(m => m.id === movieId)
@@ -132,9 +143,11 @@ const groupSessionsByDateAndMovies = (
       return {
         date,
         movies: moviesWithSessions,
+        originalDate
       }
     })
-    .sort((a, b) => a.date.localeCompare(b.date))
+    .sort((a, b) => compareAsc(a.originalDate, b.originalDate))
+    .map(({ originalDate, ...item }) => item as DateGroupWithMovies)
 }
 
 const safeFormatDate = (dateString: string | undefined): { date: string, time: string } | null => {
