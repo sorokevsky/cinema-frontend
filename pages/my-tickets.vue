@@ -9,95 +9,199 @@
       <h1 class="p-3 text-3xl font-medium text-center">Мои билеты</h1>
 
       <div class="divider divider-start">Не оплаченные</div>
-
-      <table class="table">
-        <tbody>
-          <tr>
-            <td>Cy Ganderton</td>
-            <td>Quality Control Specialist</td>
-            <td>Blue</td>
-          </tr>
-          <tr>
-            <td>Hart Hagerty</td>
-            <td>Desktop Support Technician</td>
-            <td>Purple</td>
-          </tr>
-          <tr>
-            <td>Brice Swyre</td>
-            <td>Tax Accountant</td>
-            <td>Red</td>
-          </tr>
-        </tbody>
-      </table>
+      <table-component :data="unpaidTickets" :columns="unpaidTicketsColumns" />
 
       <div class="divider divider-start">Будущие</div>
-
-      <table class="table">
-        <!-- head -->
-        <tbody>
-          <!-- row 1 -->
-          <tr>
-            <td>Cy Ganderton</td>
-            <td>Quality Control Specialist</td>
-            <td>Blue</td>
-          </tr>
-          <!-- row 2 -->
-          <tr>
-            <td>Hart Hagerty</td>
-            <td>Desktop Support Technician</td>
-            <td>Purple</td>
-          </tr>
-          <!-- row 3 -->
-          <tr>
-            <td>Brice Swyre</td>
-            <td>Tax Accountant</td>
-            <td>Red</td>
-          </tr>
-        </tbody>
-      </table>
+      <table-component :data="futureTickets" :columns="defaultColumns" />
 
       <div class="divider divider-start">Прошедшие</div>
-
-      <table class="table">
-        <!-- head -->
-        <tbody>
-          <!-- row 1 -->
-          <tr>
-            <td>Cy Ganderton</td>
-            <td>Quality Control Specialist</td>
-            <td>Blue</td>
-          </tr>
-          <!-- row 2 -->
-          <tr>
-            <td>Hart Hagerty</td>
-            <td>Desktop Support Technician</td>
-            <td>Purple</td>
-          </tr>
-          <!-- row 3 -->
-          <tr>
-            <td>Brice Swyre</td>
-            <td>Tax Accountant</td>
-            <td>Red</td>
-          </tr>
-        </tbody>
-      </table>
+      <table-component :data="pastTickets" :columns="defaultColumns" />
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getMeBookings, type Booking } from "~/client";
+import {
+  getMeBookings,
+  postBookingsByBookingIdPayments,
+  type Booking,
+  type Cinema,
+  type Movie,
+  type MovieSessionDetails,
+} from "~/client";
 
 definePageMeta({
-  middleware: ['auth'],
-})
+  middleware: ["auth"],
+});
 
-const bookings = ref<Booking[]>();
+const unpaidTicketsColumns = [
+  {
+    key: "movieSessionId",
+    title: "",
+    width: 250,
+    render: (booking: EnrichedBooking) => {
+      return h(
+        "div",
+        {
+          class: "flex flex-col gap-1",
+        },
+        [
+          h("span", booking.movie?.title),
+          h("span", booking.cinema?.name),
+          h(
+            "span",
+            getFormattedDateString(
+              booking.session?.startTime || 0,
+              "dd.MM, HH:mm"
+            )
+          ),
+        ]
+      );
+    },
+  },
+  {
+    key: "seats",
+    title: "",
+    render: (booking: EnrichedBooking) => {
+      return h(
+        "div",
+        {
+          class: "flex flex-col gap-1",
+        },
+        booking.seats?.map((seat) =>
+          h("span", `Ряд ${seat.rowNumber} место ${seat.seatNumber}`)
+        )
+      );
+    },
+  },
+  {
+    key: "id",
+    title: "",
+    render: (booking: EnrichedBooking) => {
+      return h(
+        "button",
+        {
+          onClick: () => paymentBooking(booking),
+          class: "btn",
+        },
+        "Оплатить"
+      );
+    },
+  },
+  {
+    key: "bookedAt",
+    title: "",
+    render: (booking: EnrichedBooking) => {
+      return h(
+        "span",
+        getFormattedDateString(booking.bookedAt || 0, "HH:mm")
+      );
+    },
+  },
+];
+
+const defaultColumns = [
+  {
+    key: "movieSessionId",
+    title: "",
+    width: 250,
+    render: (booking: EnrichedBooking) => {
+      return h(
+        "div",
+        {
+          class: "flex flex-col gap-1",
+        },
+        [
+          h("span", booking.movie?.title),
+          h("span", booking.cinema?.name),
+          h(
+            "span",
+            getFormattedDateString(
+              booking.session?.startTime || 0,
+              "dd.MM, HH:mm"
+            )
+          ),
+        ]
+      );
+    },
+  },
+  {
+    key: "seats",
+    title: "",
+    render: (booking: EnrichedBooking) => {
+      return h(
+        "span",
+        {
+          class: "flex flex-col gap-1",
+        },
+        booking.seats?.map((seat) =>
+          h("span", `Ряд ${seat.rowNumber} место ${seat.seatNumber}`)
+        )
+      );
+    },
+  },
+];
+
+const { settings } = useSettingsStore();
+const { getCinemaById } = useCinemaCatalog();
+const { getSessionById, getMovieById } = useMovieCatalog();
+
+interface EnrichedBooking extends Booking {
+  movie?: Movie;
+  cinema?: Cinema;
+  session?: MovieSessionDetails;
+}
+
+const enrichedBookings = ref<EnrichedBooking[]>([]);
 const loading = ref<boolean>(true);
 
-onMounted(async () => {
-  bookings.value = await getMeBookings({});
-  loading.value = false;
-  console.log(bookings.value);
+const unpaidTickets = computed(() => {
+  if (!enrichedBookings.value?.length) {
+    return [];
+  }
+  return enrichedBookings.value.filter((booking) => !booking.isPaid);
 });
+
+const futureTickets = computed(() => {
+  if (!enrichedBookings.value?.length) {
+    return [];
+  }
+  return enrichedBookings.value.filter((booking) => booking.isPaid);
+});
+const pastTickets = computed(() => []);
+
+onMounted(async () => {
+  console.log(settings);
+  try {
+    const bookings = await getMeBookings({});
+    bookings.map(async (booking: Booking) => {
+      const session = await getSessionById(Number(booking.movieSessionId));
+      const [movie, cinema] = await Promise.all([
+        getMovieById(Number(session.movieId)),
+        getCinemaById(Number(session.cinemaId)),
+      ]);
+      enrichedBookings.value.push({
+        ...booking,
+        movie,
+        cinema,
+        session,
+      });
+    });
+  } catch {
+    navigateTo("/login");
+  } finally {
+    loading.value = false;
+  }
+});
+
+const paymentBooking = async (booking: Booking) => {
+  try {
+    await postBookingsByBookingIdPayments({
+      path: { bookingId: String(booking.id) },
+    });
+    booking.isPaid = true;
+  } catch (err) {
+    alert(err);
+  }
+};
 </script>
