@@ -13,75 +13,87 @@
             :src="getFullUrlString(movie?.posterImage!)"
           >
           <div>
-            <h1 class="text-3xl font-medium">{{ movie?.title }}</h1>
-            <p class="py-6">{{ movie?.description }}</p>
+            <h1 class="text-3xl font-medium">
+              {{ movie?.title }}
+            </h1>
             <p class="py-6">
-              Год: {{ movie?.year }}<br >
+              {{ movie?.description }}
+            </p>
+            <p class="py-6">
+              Год: {{ movie?.year }}<br>
               Продолжительность:
-              {{ getTimeFromMinutesString(movie?.lengthMinutes || 0) }}<br >
-              Рейтинг: {{ movie?.rating }}<br >
+              {{ getTimeFromMinutesString(movie?.lengthMinutes || 0) }}<br>
+              Рейтинг: {{ movie?.rating }}<br>
             </p>
           </div>
         </div>
       </div>
-      <template v-for="(value, index) in sortedSessions" :key="index">
-        <div class="divider divider-start">{{ value.date }}</div>
-        <table-component :data="value.cinemas" :columns="columns" />
+      <template
+        v-for="(value, index) in sortedSessions"
+        :key="index"
+      >
+        <div class="divider divider-start">
+          {{ value.date }}
+        </div>
+        <table-component
+          :data="value.cinemas"
+          :columns="columns"
+        />
       </template>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Cinema, Movie, MovieSession } from "~/client";
+import type { Cinema, Movie, MovieSession } from '~/client'
 
 interface CinemaWithSessions {
-  cinema: Cinema;
+  cinema: Cinema
   sessions: Array<{
-    id: number;
-    time: string;
-  }>;
+    id: number
+    time: string
+  }>
 }
 
 const columns = [
   {
-    key: "cinema",
-    title: "",
-    render: (row: CinemaWithSessions) => h("span", row.cinema.name),
+    key: 'cinema',
+    title: '',
+    render: (row: CinemaWithSessions) => h('span', row.cinema.name),
   },
   {
-    key: "sessions",
-    title: "",
+    key: 'sessions',
+    title: '',
     render: (row: CinemaWithSessions) => {
       return h(
-        "div",
+        'div',
         {
-          class: "flex flex-wrap gap-3 justify-end",
+          class: 'flex flex-wrap gap-3 justify-end',
         },
-        row.sessions.map((session) =>
+        row.sessions.map(session =>
           h(
-            "a",
+            'a',
             {
               href: `/movies/${Number(movie.value?.id)}/bookings/${session.id}`,
-              class: "btn",
+              class: 'btn',
               key: session.id,
             },
-            session.time
-          )
-        )
-      );
+            session.time,
+          ),
+        ),
+      )
     },
   },
-];
+]
 
-const { getAllCinemas } = useCinemaCatalog();
-const { getMovieById, getMovieSessionsById } = useMovieCatalog();
+const { getAllCinemas } = useCinemaCatalog()
+const { getMovieById, getMovieSessionsById } = useMovieCatalog()
 
-const sessions = ref<MovieSession[]>();
-const movie = ref<Movie>();
-const cinemas = ref<Cinema[]>();
-const sortedSessions = ref();
-const loading = ref(true);
+const sessions = ref<MovieSession[]>()
+const movie = ref<Movie>()
+const cinemas = ref<Cinema[]>()
+const sortedSessions = ref()
+const loading = ref(true)
 
 onMounted(async () => {
   const { movieid } = useRoute().params;
@@ -89,14 +101,14 @@ onMounted(async () => {
     getAllCinemas(),
     getMovieById(Number(movieid)),
     getMovieSessionsById(Number(movieid)),
-  ]);
+  ])
 
-  loading.value = false;
+  loading.value = false
 
   sortedSessions.value = getSessionsForMovieGroupedByCinemas(
     Number(movieid),
     sessions.value,
-    cinemas.value
-  );
-});
+    cinemas.value,
+  )
+})
 </script>

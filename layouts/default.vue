@@ -4,7 +4,7 @@
       <menu-component class="sticky top-6" />
     </div>
     <div class="flex-1 flex flex-col overflow-hidden card shadow bg-base-100 p-4">
-        <nuxt-page />
+      <nuxt-page />
     </div>
   </div>
 </template>

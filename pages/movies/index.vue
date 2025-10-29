@@ -6,62 +6,65 @@
       </div>
     </template>
     <template v-else>
-      <table-component :data="moviesData" :columns="сolumns" />
+      <table-component
+        :data="moviesData"
+        :columns="сolumns"
+      />
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Movie } from "~/client";
+import type { Movie } from '~/client'
 
 const сolumns = [
   {
-    key: "posterImage",
-    title: "",
+    key: 'posterImage',
+    title: '',
     render: (movie: Movie) =>
-      h("img", {
+      h('img', {
         src: getFullUrlString(movie.posterImage!),
         alt: movie.title,
-        class: "object-cover rounded",
+        class: 'object-cover rounded',
       }),
   },
   {
-    key: "title",
-    title: "Название",
+    key: 'title',
+    title: 'Название',
   },
   {
-    key: "lengthMinutes",
-    title: "Продолжительность",
+    key: 'lengthMinutes',
+    title: 'Продолжительность',
     render: (movie: Movie) =>
-      h("span", getTimeFromMinutesString(movie.lengthMinutes!)),
+      h('span', getTimeFromMinutesString(movie.lengthMinutes!)),
   },
   {
-    key: "rating",
-    title: "Рейтинг",
+    key: 'rating',
+    title: 'Рейтинг',
   },
   {
-    key: "id",
-    float: "right",
-    title: "",
+    key: 'id',
+    float: 'right',
+    title: '',
     render: (movie: Movie) => {
       return h(
-        "a",
+        'a',
         {
           href: `/movies/${movie.id}`,
-          class: "btn",
+          class: 'btn',
         },
-        "Посмотреть сеансы"
-      );
+        'Посмотреть сеансы',
+      )
     },
   },
 ]
 
-const { getAllMovies } = useMovieCatalog();
-const moviesData = ref<Movie[]>([]);
-const loading = ref(true);
+const { getAllMovies } = useMovieCatalog()
+const moviesData = ref<Movie[]>([])
+const loading = ref(true)
 
 onMounted(async () => {
-  moviesData.value = await getAllMovies();
-  loading.value = false;
-});
+  moviesData.value = await getAllMovies()
+  loading.value = false
+})
 </script>

@@ -1,21 +1,18 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: true, viteInspect: false, },
   modules: ['@pinia/nuxt', '@nuxt/test-utils', '@nuxt/eslint'],
-  typescript: {
-    typeCheck: true,
-  },
-  routeRules: {
-    '/': { redirect: '/movies' },
-  },
+  devtools: { enabled: true, viteInspect: false },
   css: ['@/assets/css/tailwind.css'],
   runtimeConfig: {
     public: {
       BASE_URL: import.meta.env.BASE_URL,
     },
   },
+  routeRules: {
+    '/': { redirect: '/movies' },
+  },
+  compatibilityDate: '2025-07-15',
   vite: {
     plugins: [tailwindcss()],
     server: {
@@ -25,6 +22,14 @@ export default defineNuxtConfig({
           changeOrigin: true,
         },
       },
+    },
+  },
+  typescript: {
+    typeCheck: true,
+  },
+  eslint: {
+    config: {
+      stylistic: true,
     },
   },
 })
