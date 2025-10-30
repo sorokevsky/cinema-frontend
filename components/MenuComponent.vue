@@ -24,7 +24,7 @@
     <template v-else>
       <NuxtLink
         class="btn"
-        :class="{ 'btn-primary': $route.path.startsWith('/login') }"
+        :class="{ 'btn-primary': ['/login', '/registration'].includes($route.path) }"
         to="/login"
       >
         Вход

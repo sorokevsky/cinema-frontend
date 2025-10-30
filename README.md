@@ -34,18 +34,9 @@ npm run dev
 
 ## Тесты
 
-Для запуска тестов выполните следующие команды:
+Для запуска теста выполните следующую команду:
 
 ```bash
 # npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+npm run test:nuxt
 ```

@@ -41,7 +41,7 @@
       <p>
         Если у вас нет аккаунта
         <nuxt-link
-          to="/login/registration"
+          to="/registration"
           class="link link-primary"
         >
           зарегистрируйтесь
@@ -60,7 +60,6 @@ definePageMeta({
 
 const errorMessage = ref<string>('')
 const loading = ref<boolean>(false)
-
 const username = ref<string>('')
 const password = ref<string>('')
 
@@ -70,7 +69,6 @@ const handleSubmit = async (): Promise<void> => {
     const { token } = await postLogin({
       body: { username: username.value, password: password.value },
     })
-
     const cookie = useCookie('token')
     cookie.value = token
     await navigateTo('/my-tickets')
