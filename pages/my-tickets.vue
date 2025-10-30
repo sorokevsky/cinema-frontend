@@ -6,10 +6,6 @@
       </div>
     </template>
     <template v-else>
-      <h1 class="p-3 text-3xl font-medium text-center">
-        Мои билеты
-      </h1>
-
       <div class="divider divider-start">
         Не оплаченные
       </div>
@@ -17,7 +13,6 @@
         :data="unpaidTickets"
         :columns="unpaidTicketsColumns"
       />
-
       <div class="divider divider-start">
         Будущие
       </div>
@@ -25,7 +20,6 @@
         :data="futureTickets"
         :columns="defaultColumns"
       />
-
       <div class="divider divider-start">
         Прошедшие
       </div>
@@ -51,6 +45,7 @@ import {
 
 definePageMeta({
   middleware: ['auth'],
+  title: 'Мои билеты',
 })
 
 const { settings } = useSettingsStore()

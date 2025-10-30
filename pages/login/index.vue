@@ -7,9 +7,6 @@
     >
       <span>{{ errorMessage }}</span>
     </div>
-    <h1 class="p-3 text-3xl font-medium text-center">
-      Логин
-    </h1>
     <form
       class="fieldset"
       @submit.prevent="handleSubmit"
@@ -56,6 +53,10 @@
 
 <script setup lang="ts">
 import { postLogin } from '~/client'
+
+definePageMeta({
+  title: 'Логин',
+})
 
 const errorMessage = ref<string>('')
 const loading = ref<boolean>(false)

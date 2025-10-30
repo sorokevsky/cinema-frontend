@@ -6,9 +6,6 @@
       </div>
     </template>
     <template v-else>
-      <h1 class="p-3 text-3xl font-medium text-center">
-        Выбрать места
-      </h1>
       <div class="card bg-base-300 p-3">
         <p>
           Фильм: {{ movie?.title }}<br>
@@ -58,6 +55,10 @@ import {
   type PostMovieSessionsByMovieSessionIdBookingsError,
   type Seat,
 } from '~/client'
+
+definePageMeta({
+  title: 'Выбрать места',
+})
 
 const { getCinemaById } = useCinemaCatalog()
 const { getMovieById, postSessionBookingById } = useMovieCatalog()

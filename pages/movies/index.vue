@@ -17,6 +17,10 @@
 <script setup lang="ts">
 import type { Movie } from '~/client'
 
+definePageMeta({
+  title: 'Фильмы',
+})
+
 const сolumns = [
   {
     key: 'posterImage',
@@ -31,6 +35,7 @@ const сolumns = [
   {
     key: 'title',
     title: 'Название',
+    width: 200,
   },
   {
     key: 'lengthMinutes',

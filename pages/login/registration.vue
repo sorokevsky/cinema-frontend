@@ -7,9 +7,6 @@
     >
       <span>{{ errorMessage }}</span>
     </div>
-    <h1 class="p-3 text-3xl font-medium text-center">
-      Регистрация
-    </h1>
     <form
       class="fieldset"
       @submit.prevent="handleSubmit"
@@ -93,6 +90,10 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import { postRegister, type PostRegisterError } from '~/client'
+
+definePageMeta({
+  title: 'Регистрация',
+})
 
 const errorMessage = ref<string>('')
 const loading = ref<boolean>(false)

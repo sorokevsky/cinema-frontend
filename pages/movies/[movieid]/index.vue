@@ -13,9 +13,6 @@
             :src="getFullUrlString(movie?.posterImage!)"
           >
           <div>
-            <h1 class="text-3xl font-medium">
-              {{ movie?.title }}
-            </h1>
             <p class="py-6">
               {{ movie?.description }}
             </p>
@@ -110,5 +107,7 @@ onMounted(async () => {
     sessions.value,
     cinemas.value,
   )
+
+  useRoute().meta.title = movie.value?.title
 })
 </script>

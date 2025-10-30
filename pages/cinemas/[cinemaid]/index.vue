@@ -6,9 +6,6 @@
       </div>
     </template>
     <template v-else>
-      <h1 class="p-3 text-3xl font-medium text-center">
-        {{ cinema?.name }}
-      </h1>
       <template
         v-for="(value, index) in sortedSessions"
         :key="index"
@@ -100,7 +97,6 @@ onMounted(async () => {
     sessions.value,
     movies.value,
   )
-
-  console.log(cinema.value, movies.value, sessions.value, sortedSessions.value)
+  useRoute().meta.title = cinema.value?.name
 })
 </script>

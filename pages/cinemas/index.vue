@@ -11,6 +11,10 @@
 <script setup lang="ts">
 import type { Cinema } from '~/client'
 
+definePageMeta({
+  title: 'Кинотеатры',
+})
+
 const сolumns = [
   {
     key: 'name',
