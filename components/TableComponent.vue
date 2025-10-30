@@ -46,17 +46,6 @@
 </template>
 
 <script setup lang="ts">
-type TableData = Record<string, unknown> & { id?: string | number }
-type Float = 'right' | 'left'
-
-interface TableColumn<T = TableData> {
-  key: string
-  title: string
-  float?: Float
-  width?: number
-  render?: (item: T) => VNode
-}
-
 interface TableProps<T = TableData> {
   data: T[]
   columns: TableColumn<T>[]

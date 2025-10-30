@@ -57,7 +57,7 @@ const сolumns = [
       )
     },
   },
-]
+] as TableColumn[]
 
 const { getAllMovies } = useMovieCatalog()
 const moviesData = ref<Movie[]>([])

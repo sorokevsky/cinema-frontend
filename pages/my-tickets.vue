@@ -137,7 +137,7 @@ const unpaidTicketsColumns = [
       )
     },
   },
-]
+] as TableColumn[]
 
 const defaultColumns = [
   {
@@ -179,7 +179,7 @@ const defaultColumns = [
       )
     },
   },
-]
+] as TableColumn[]
 
 const bookingPaymentTimeSeconds = computed(
   () => settings?.bookingPaymentTimeSeconds || 180,

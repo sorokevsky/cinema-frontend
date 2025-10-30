@@ -84,7 +84,7 @@ const columns = [
       )
     },
   },
-]
+] as unknown as TableColumn[]
 
 const { getAllCinemas } = useCinemaCatalog()
 const { getMovieById, getMovieSessionsById } = useMovieCatalog()
