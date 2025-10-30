@@ -131,7 +131,6 @@ const registrationSchema = z
   })
 
 const validateForm = (): boolean => {
-  console.log(fieldErrors.value)
   try {
     registrationSchema.parse({
       username: username.value,
@@ -147,7 +146,6 @@ const validateForm = (): boolean => {
 }
 
 const validateField = (fieldName: keyof typeof fieldErrors.value): void => {
-  console.log(fieldErrors.value)
   const newErrors = { ...fieldErrors.value }
   newErrors[fieldName] = []
   fieldErrors.value = newErrors
@@ -175,7 +173,6 @@ const validateField = (fieldName: keyof typeof fieldErrors.value): void => {
     if (error instanceof z.ZodError) {
       isValid = false
       errorMessage = JSON.parse(error.message) || 'Ошибка валидации'
-      console.log('errorMessage', errorMessage)
     }
   }
 
