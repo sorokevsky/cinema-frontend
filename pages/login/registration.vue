@@ -16,7 +16,7 @@
         v-model="username"
         class="input"
         placeholder="Введите логин"
-        @blur="validateField('username')"
+        @input="validateField('username')"
       >
       <div
         v-if="fieldErrors.username"
@@ -36,7 +36,7 @@
         type="password"
         class="input"
         placeholder="Введите пароль"
-        @blur="validateField('password')"
+        @input="validateField('password')"
       >
       <div
         v-if="fieldErrors.password"
@@ -146,7 +146,7 @@ const validateForm = (): boolean => {
   }
 }
 
-const validateField = (fieldName: keyof typeof fieldErrors.value) => {
+const validateField = (fieldName: keyof typeof fieldErrors.value): void => {
   console.log(fieldErrors.value)
   const newErrors = { ...fieldErrors.value }
   newErrors[fieldName] = []
@@ -191,7 +191,7 @@ const validateField = (fieldName: keyof typeof fieldErrors.value) => {
   }
 }
 
-const handleSubmit = async () => {
+const handleSubmit = async (): Promise<void> => {
   errorMessage.value = ''
 
   if (!validateForm()) {

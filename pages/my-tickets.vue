@@ -252,7 +252,7 @@ onMounted(async () => {
   }, 1000)
 })
 
-const paymentBooking = async (booking: Booking) => {
+const paymentBooking = async (booking: Booking): Promise<void> => {
   try {
     await postBookingsByBookingIdPayments({
       path: { bookingId: String(booking.id) },

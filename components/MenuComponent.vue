@@ -42,7 +42,7 @@ const ROUTES = [
   { name: '/my-tickets', title: 'Мои билеты' },
 ] as const
 
-const logout = () => {
+const logout = (): void => {
   const cookie = useCookie('token')
   cookie.value = null
   navigateTo('/movies')

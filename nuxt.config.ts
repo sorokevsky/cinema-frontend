@@ -18,14 +18,6 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   vite: {
     plugins: [tailwindcss()],
-    server: {
-      proxy: {
-        '/api': {
-          target: import.meta.env.BASE_URL,
-          changeOrigin: true,
-        },
-      },
-    },
   },
   typescript: {
     typeCheck: true,

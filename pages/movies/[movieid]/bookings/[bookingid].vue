@@ -97,12 +97,12 @@ onMounted(async () => {
   loading.value = false
 })
 
-const handleSelectedSeats = (seats: Seat[]) => {
+const handleSelectedSeats = (seats: Seat[]): void => {
   selectedSeats.value = seats
 }
 
-const handleBooking = async () => {
-  if (!useCookie('token').value) return navigateTo('/login')
+const handleBooking = async (): Promise<void> => {
+  if (!useCookie('token').value) navigateTo('/login')
 
   try {
     bookingLoading.value = true

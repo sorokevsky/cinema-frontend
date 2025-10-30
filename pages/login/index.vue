@@ -64,7 +64,7 @@ const loading = ref<boolean>(false)
 const username = ref<string>('')
 const password = ref<string>('')
 
-const handleSubmit = async () => {
+const handleSubmit = async (): Promise<void> => {
   try {
     loading.value = true
     const { token } = await postLogin({

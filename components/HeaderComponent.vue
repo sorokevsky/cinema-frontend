@@ -33,7 +33,7 @@ const showBackButton = computed(() => {
   return pathParts.length > 1
 })
 
-const goBack = () => {
+const goBack = (): void => {
   const currentPath = route.path
   const pathParts = currentPath.split('/').filter(part => part !== '')
 
